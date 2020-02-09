@@ -1,5 +1,5 @@
 # mobloot 
-
+Implements vanilla loot tables via virion. If wanted, it can fully replace PM loot. Needs addons to work
 ## Usage
 - You need to have a vanilla.zip behaviour pack installed in your server (does not need to force resources). You can get it by extracting your game files. It is also possible to make a custom pack that only includes the loot tables to safe on file size.
 - `xenialdan\mobloot\API::init()` must be called in the plugin to properly make this work
