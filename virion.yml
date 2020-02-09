@@ -1,0 +1,6 @@
+name: mobloot
+version: 0.0.1
+antigen: xenialdan\mobloot
+api: [3.11]
+php: [7.2]
+author: XenialDan
