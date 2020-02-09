@@ -24,9 +24,9 @@ class API
      * Searches for loot_table files in behaviour packs and caches their json data
      * @throws RuntimeException
      */
-    public static function init():void
+    public static function init(): void
     {
-        if(!empty(self::$loottables)) return; //avoid double registering
+        if (!empty(self::$loottables)) return; //avoid double registering
         foreach (Server::getInstance()->getResourcePackManager()->getResourceStack() as $resourcePack) {//TODO check if the priority is ordered in that way, that the top pack overwrites the lower packs
             if ($resourcePack instanceof ZippedResourcePack) {
                 $za = new \ZipArchive();
@@ -51,92 +51,92 @@ class API
         foreach ($conditions as $value) {
             switch ($value["condition"]) {
                 case "entity_properties":
-                    {//function condition
-                        switch ($value["entity"]) {
-                            case "this":
-                                {
-                                    $target = $entity;
-                                    break;
-                                }
+                {//function condition
+                    switch ($value["entity"]) {
+                        case "this":
+                        {
+                            $target = $entity;
+                            break;
+                        }
+                        default:
+                        {
+                            print("(Yet) Unknown target type: " . $value["entity"] . PHP_EOL);
+                            return false;
+                        }
+                    }
+                    foreach ($value["properties"] as $property => $propertyValue) {
+                        switch ($property) {
+                            case "on_fire":
+                            {
+                                if (!$target->isOnFire()) return false;
+                                break;
+                            }
                             default:
-                                {
-                                    print("(Yet) Unknown target type: " . $value["entity"] .PHP_EOL);
-                                    return false;
-                                }
-                        }
-                        foreach ($value["properties"] as $property => $propertyValue) {
-                            switch ($property) {
-                                case "on_fire":
-                                    {
-                                        if (!$target->isOnFire()) return false;
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        print("(Yet) Unknown entity property: " . $property.PHP_EOL);
-                                        return false;
-                                    }
+                            {
+                                print("(Yet) Unknown entity property: " . $property . PHP_EOL);
+                                return false;
                             }
                         }
-                        break;
                     }
+                    break;
+                }
                 case "killed_by_player":
-                    {//roll condition
-                        // TODO recode/recheck/recode etc
-                        if (($event = $entity->getLastDamageCause()) instanceof EntityDamageEvent and $event instanceof EntityDamageByEntityEvent) {//TODO fix getLastDamageCause on null
-                            if (!$event->getDamager() instanceof Player) return false;
-                        }
-                        break;
+                {//roll condition
+                    // TODO recode/recheck/recode etc
+                    if (($event = $entity->getLastDamageCause()) instanceof EntityDamageEvent and $event instanceof EntityDamageByEntityEvent) {//TODO fix getLastDamageCause on null
+                        if (!$event->getDamager() instanceof Player) return false;
                     }
+                    break;
+                }
                 case "killed_by_entity":
-                    {//roll condition
-                        // TODO recode/recheck/recode etc
-                        if (($event = $entity->getLastDamageCause()) instanceof EntityDamageEvent and $event instanceof EntityDamageByEntityEvent) {//TODO fix getLastDamageCause on null
-                            $damager = $event->getDamager();
-                            if ($event instanceof EntityDamageByChildEntityEvent) {
-                                $damager = $event->getChild()->getOwningEntity();
-                            }
-                            print("========= SAVE ID OF DAMAGER =========".PHP_EOL);
-                            print($damager->getSaveId().PHP_EOL);
-                            print("========= SEARCHED FOR =========".PHP_EOL);
-                            print($value["entity_type"].PHP_EOL);
-                            if ($event->getDamager()->getSaveId() !== $value["entity_type"]) return false;
+                {//roll condition
+                    // TODO recode/recheck/recode etc
+                    if (($event = $entity->getLastDamageCause()) instanceof EntityDamageEvent and $event instanceof EntityDamageByEntityEvent) {//TODO fix getLastDamageCause on null
+                        $damager = $event->getDamager();
+                        if ($event instanceof EntityDamageByChildEntityEvent) {
+                            $damager = $event->getChild()->getOwningEntity();
                         }
+                        print("========= SAVE ID OF DAMAGER =========" . PHP_EOL);
+                        print($damager->getSaveId() . PHP_EOL);
+                        print("========= SEARCHED FOR =========" . PHP_EOL);
+                        print($value["entity_type"] . PHP_EOL);
+                        if ($event->getDamager()->getSaveId() !== $value["entity_type"]) return false;
+                    }
 
-                        break;
-                    }
+                    break;
+                }
                 case "random_chance_with_looting":
-                    {//roll condition
-                        print("========= CHANCE =========".PHP_EOL);
-                        print($value["chance"].PHP_EOL);
-                        print("========= LOOTING_MULTIPLIER =========".PHP_EOL);
-                        print($value["looting_multiplier"].PHP_EOL);
-                        break;
-                    }
+                {//roll condition
+                    print("========= CHANCE =========" . PHP_EOL);
+                    print($value["chance"] . PHP_EOL);
+                    print("========= LOOTING_MULTIPLIER =========" . PHP_EOL);
+                    print($value["looting_multiplier"] . PHP_EOL);
+                    break;
+                }
                 case "random_difficulty_chance":
-                    {//loot condition //return nothing yet, those are roll-repeats or so
-                        print("========= CHANCE =========".PHP_EOL);
-                        print($value["default_chance"].PHP_EOL);
-                        print("========= CHANCE FITTING THE DIFFICULTY =========".PHP_EOL);
-                        //TODO
-                        foreach ($value as $difficultyString => $chance) {
-                            print($difficultyString . " => " . $chance.PHP_EOL);
-                            if ($entity->getLevel()->getDifficulty() === Level::getDifficultyFromString($difficultyString)) {
-                                print("========= CHANCE =========".PHP_EOL);
-                                print($chance.PHP_EOL);
-                            }
+                {//loot condition //return nothing yet, those are roll-repeats or so
+                    print("========= CHANCE =========" . PHP_EOL);
+                    print($value["default_chance"] . PHP_EOL);
+                    print("========= CHANCE FITTING THE DIFFICULTY =========" . PHP_EOL);
+                    //TODO
+                    foreach ($value as $difficultyString => $chance) {
+                        print($difficultyString . " => " . $chance . PHP_EOL);
+                        if ($entity->getLevel()->getDifficulty() === Level::getDifficultyFromString($difficultyString)) {
+                            print("========= CHANCE =========" . PHP_EOL);
+                            print($chance . PHP_EOL);
                         }
-                        break;
                     }
+                    break;
+                }
                 case "random_regional_difficulty_chance":
-                    {//roll condition
-                        //TODO
-                        //no break, send default message
-                    }
+                {//roll condition
+                    //TODO
+                    //no break, send default message
+                }
                 default:
-                    {
-                        print("(Yet) Unknown condition: " . $value["condition"].PHP_EOL);
-                    }
+                {
+                    print("(Yet) Unknown condition: " . $value["condition"] . PHP_EOL);
+                }
             }
 
         }
@@ -155,34 +155,34 @@ class API
         switch ($target) {
             //The other member of an interaction, not the caller
             case "other":
-                {
-                    return $other;
-                    break;
-                }
+            {
+                return $other;
+                break;
+            }
             //TODO The caller's current parent
             case "parent":
-                {
-                    return null;//Not possible yet!
-                    break;
-                }
+            {
+                return null;//Not possible yet!
+                break;
+            }
             //TODO The player involved with the interaction --Could possibly be even another entity?
             case "player":
-                {
-                    return ($other instanceof Player) ? $other : null;
-                    break;
-                }
+            {
+                return ($other instanceof Player) ? $other : null;
+                break;
+            }
             //The entity or object calling the test
             case "self":
-                {
-                    return $caller;
-                    break;
-                }
+            {
+                return $caller;
+                break;
+            }
             //The caller's current target
             case "target":
-                {
-                    return $caller->getTargetEntity();
-                    break;
-                }
+            {
+                return $caller->getTargetEntity();
+                break;
+            }
         }
         return null;
     }

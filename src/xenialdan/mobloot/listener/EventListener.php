@@ -45,7 +45,7 @@ class EventListener implements Listener
         $plugin->getServer()->getPluginManager()->registerEvents(new self, $plugin);
     }
 
-    public function onDeath(EntityDeathEvent $ev):void
+    public function onDeath(EntityDeathEvent $ev): void
     {
         /** @var Creature $entity */
         if (($entity = $ev->getEntity()) instanceof Creature) {
